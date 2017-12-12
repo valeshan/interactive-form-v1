@@ -6,6 +6,8 @@ const inputBox = document.getElementById('other-title');
 const design = document.getElementById('design');
 const color = document.getElementById('color');
 const activities = document.getElementsByClassName('activities');
+const $name = $("#name");
+const $email = $("#email");
 
 
 //*********** FOCUS ************//
@@ -98,7 +100,7 @@ $(".activities input[name=npm]").attr("value", "100");
 //append span element to activities fieldset
 $(".activities").append("<p class='total'></p>");
 
-//create totalCalc that adds cost to total whenever checkbox is checked and updates total span text
+//create totalCalc that adds cost to total whenever checkbox is checked & updates total span text
 const totalCalc = function(){
     let total = 0;
     $(".activities input[type='checkbox']:checked").each(function(){
@@ -194,5 +196,55 @@ const paySelector = function(){
 //run paySelector at start to hide other payment types
 paySelector();
 
-//change event handler with paySelector 
+//change event handler with paySelector
 $("#payment").on("change", paySelector);
+
+
+//************ FORM VALIDATION ***************//
+
+//check if name is filled in
+const nameValidator = function(name){
+  return /[a-z]+/.test(name);
+}
+
+//check if email is correctly configured
+const emailValidator = function(email){
+
+}
+
+//check if at least 1 activity is selected
+const activityValidator = function(activity){
+
+}
+
+//check if payment is selected & if credit card, that number is correct length
+const paymentValidator = function(payment){
+
+}
+
+//show or hide tips
+
+const showOrHideTips = function(show, element){
+  if(show){
+    element.style.display = "inherit";
+  }
+  else{
+    element.style.display = "none";
+  }
+}
+
+//listener to see if any validators return false value
+const createListener = function(validator){
+  return e =>{
+     const text = e.target.value;
+     const valid = validator(text);
+     const showTip = text !== "" && !valid;
+     const tooltip = e.target.nextElementSibling;
+     showOrHideTips(showTip, tooltip);
+  }
+}
+
+$name.on("input", createListener(nameValidator));
+//$email.on("input", createListener(emailValidator));
+//activities.addEventListener('input', createListener(activityValidator));
+//$("#credit-card").on("input", createListener(paymentValidator));
