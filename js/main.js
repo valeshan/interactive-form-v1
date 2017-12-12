@@ -78,7 +78,7 @@ $(".activities input[name=npm]").attr("value", "100");
 $(".activities").append("<span class='total'></span>");
 
 //create totalCalc that adds cost to total whenever checkbox is checked and updates total span text
-function totalCalc(){
+const totalCalc = function(){
     let total = 0;
     $(".activities input[type='checkbox']:checked").each(function(){
            let cost = $(this).val();
@@ -93,3 +93,55 @@ $('.activities input').change(()=>{
 });
 
 //*** Event Overlap ***//
+
+//disable a particular checkbox if a checkbox is selected
+const tuesAm1 = function(){
+  if(this.checked){
+    $(".activities input[name=express]").attr("disabled", true);
+    $(".activities input[name=express]").parent().css("color", "grey");
+  }
+  else{
+    $(".activities input[name=express]").attr("disabled", false);
+    $(".activities input[name=express]").parent().css("color", "black");
+  }
+}
+
+const tuesAm2 = function(){
+  if(this.checked){
+    $(".activities input[name=js-frameworks]").attr("disabled", true);
+    $(".activities input[name=js-frameworks]").parent().css("color", "grey");
+  }
+  else{
+    $(".activities input[name=js-frameworks]").attr("disabled", false);
+    $(".activities input[name=js-frameworks]").parent().css("color", "black");
+  }
+}
+
+const tuesPm1 = function(){
+  if(this.checked){
+    $(".activities input[name=node]").attr("disabled", true);
+    $(".activities input[name=node]").parent().css("color", "grey");
+  }
+  else{
+    $(".activities input[name=node]").attr("disabled", false);
+    $(".activities input[name=node]").parent().css("color", "black");
+  }
+}
+
+const tuesPm2 = function(){
+  if(this.checked){
+    $(".activities input[name=js-libs]").attr("disabled", true);
+    $(".activities input[name=js-libs]").parent().css("color", "grey");
+  }
+  else{
+    $(".activities input[name=js-libs]").attr("disabled", false);
+    $(".activities input[name=js-libs]").parent().css("color", "black");
+  }
+}
+
+$(function() {
+  $(".activities input[name=js-frameworks]").click(tuesAm1);
+  $(".activities input[name=express]").click(tuesAm2);
+  $(".activities input[name=js-libs]").click(tuesPm1);
+  $(".activities input[name=node]").click(tuesPm2);
+});
