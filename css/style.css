@@ -101,10 +101,6 @@ input[type="radio"] {
 	display: inline-block;
 }
 
-input[type="checkbox"][disabled] + label{
-  color: grey;
-}
-
 button {
 	color: #fff;
 	padding: .55em 1.25em;

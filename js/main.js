@@ -33,32 +33,53 @@ jobRole.addEventListener('change', showOther);
 
 //*********** THEME CHANGER ************//
 
+//hide color dropdown
+$("#colors-js-puns").hide();
+
+//add default color option
+$("#color").append("<option value='default'>--- Please select a T-shirt theme ---</option>");
+
 //when option is chosen, only show partial selection
 const themeChanger = function(){
   if(design.value == "js puns"){
     for (let i= 0; i <= color.length; i++){
-      if (color.options[i].text.endsWith("JS shirt only)")){
+      if (color.options[i].text.endsWith("JS shirt only)") ||
+          color.options[i].text.endsWith("T-shirt theme ---")){
            color.options[i].style.display = "none";
            color.options[0].selected = true;
+           $("#colors-js-puns").show();
          }
       else{
-        color.options[i].style.display = "block";
+        color.options[i].style.display = "block"
+        $("#colors-js-puns").show();
       }
        }
   } else if(design.value == "heart js"){
       for (let i= 0; i <= color.length; i++){
-        if (color.options[i].text.endsWith("(JS Puns shirt only)")){
+        if (color.options[i].text.endsWith("(JS Puns shirt only)") ||
+            color.options[i].text.endsWith("T-shirt theme ---")){
              color.options[i].style.display = "none";
              color.options[3].selected = true;
+             $("#colors-js-puns").show();
         }
         else{
           color.options[i].style.display = "block";
+          $("#colors-js-puns").show();
         }
       }
-  }
+    } else{
+      for (let i= 0; i <= color.length; i++){
+        if (color.options[i].text.endsWith("(JS Puns shirt only)") ||
+            color.options[i].text.endsWith("JS shirt only)")){
+           color.options[i].style.display = "none";
+           color.options[6].selected = true;
+        }
+      }
+    }
   }
 
-design.addEventListener('change', themeChanger);
+//added change event handler with themeChanger
+$("#design").on('change', themeChanger);
 
 
 //************ ACTIVITIES REGISTER ***************//
@@ -75,7 +96,7 @@ $(".activities input[name=build-tools]").attr("value", "100");
 $(".activities input[name=npm]").attr("value", "100");
 
 //append span element to activities fieldset
-$(".activities").append("<span class='total'></span>");
+$(".activities").append("<p class='total'></p>");
 
 //create totalCalc that adds cost to total whenever checkbox is checked and updates total span text
 const totalCalc = function(){
@@ -139,9 +160,39 @@ const tuesPm2 = function(){
   }
 }
 
+//enable functions on click
 $(function() {
   $(".activities input[name=js-frameworks]").click(tuesAm1);
   $(".activities input[name=express]").click(tuesAm2);
   $(".activities input[name=js-libs]").click(tuesPm1);
   $(".activities input[name=node]").click(tuesPm2);
 });
+
+
+//************ PAYMENT INFO ***************//
+
+//have default option of credit card selected
+$("#payment option[value='credit card']").attr("selected", true);
+
+//whenever a payment option is selected, other payment types are hidden
+const paySelector = function(){
+  if($("#payment").val() == "credit card"){
+    $("#credit-card").show();
+    $("#credit-card").next().hide();
+    $("#credit-card").next().next().hide();
+  } else if($("#payment").val()=="paypal"){
+    $("#credit-card").hide();
+    $("#credit-card").next().show();
+    $("#credit-card").next().next().hide();
+  } else if($("#payment").val()=="bitcoin"){
+    $("#credit-card").hide();
+    $("#credit-card").next().hide();
+    $("#credit-card").next().next().show();
+  }
+}
+
+//run paySelector at start to hide other payment types
+paySelector();
+
+//change event handler with paySelector 
+$("#payment").on("change", paySelector);
