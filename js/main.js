@@ -1,18 +1,25 @@
 //*********** VARIABLES ************//
 
 //all variable selectors
-const jobRole = document.getElementById('title');
+const $form = $("form");
+const $jobRole = $("#title");
 const inputBox = document.getElementById('other-title');
 const design = document.getElementById('design');
 const color = document.getElementById('color');
-const activities = document.getElementsByClassName('activities');
+
 const $name = $("#name");
-const $email = $("#email");
+const $email = $("#mail");
+const $activities = $(".activities");
+const $payment = $("#payment");
+const $card = $("#credit-card");
+const $creditNum = $("#cc-num");
+const $zipCode = $("#zip");
+const $cvv = $("#cvv");
 
 
 //*********** FOCUS ************//
 
-$("#name").focus();
+$name.focus();
 
 
 //************ OTHER TEXTFIELD ***************//
@@ -22,7 +29,7 @@ inputBox.style.display = "none";
 
 //function to display other-title when other option is selected
 const showOther = function(){
-  if(jobRole.value == "other"){
+  if($jobRole.val() == "other"){
     inputBox.style.display = "block";
   }else{
     inputBox.style.display = "none";
@@ -30,16 +37,13 @@ const showOther = function(){
 }
 
 //event listener for change to jobRole list
-jobRole.addEventListener('change', showOther);
+$jobRole.change(showOther);
 
 
 //*********** THEME CHANGER ************//
 
 //hide color dropdown
 $("#colors-js-puns").hide();
-
-//add default color option
-$("#color").append("<option value='default'>--- Please select a T-shirt theme ---</option>");
 
 //when option is chosen, only show partial selection
 const themeChanger = function(){
@@ -49,7 +53,6 @@ const themeChanger = function(){
           color.options[i].text.endsWith("T-shirt theme ---")){
            color.options[i].style.display = "none";
            color.options[0].selected = true;
-           $("#colors-js-puns").show();
          }
       else{
         color.options[i].style.display = "block"
@@ -62,7 +65,6 @@ const themeChanger = function(){
             color.options[i].text.endsWith("T-shirt theme ---")){
              color.options[i].style.display = "none";
              color.options[3].selected = true;
-             $("#colors-js-puns").show();
         }
         else{
           color.options[i].style.display = "block";
@@ -197,54 +199,103 @@ const paySelector = function(){
 paySelector();
 
 //change event handler with paySelector
-$("#payment").on("change", paySelector);
+$payment.on("change", paySelector);
 
 
 //************ FORM VALIDATION ***************//
 
-//check if name is filled in
-const nameValidator = function(name){
-  return /[a-z]+/.test(name);
+//generate error functions
+const genNameError = function() {
+  const $nameError = $("<span id='name-error' style='color:red'>Please enter your name below.</span>");
+  $nameError.insertBefore($name);
+  $nameError.hide();
 }
 
-//check if email is correctly configured
-const emailValidator = function(email){
-
+const genEmailError = function() {
+  const $emailError = $("<span id='email-error' style='color:red'>Please correctly enter your email below.</span>");
+  $emailError.insertBefore($email);
+  $emailError.hide();
 }
 
-//check if at least 1 activity is selected
-const activityValidator = function(activity){
-
+const genActError = function() {
+  const $activityError = $("<span id='activity-error' style='color:red'>Please select an activity above.</span>");
+  $activityError.insertAfter($activities);
+  $activityError.hide();
 }
 
-//check if payment is selected & if credit card, that number is correct length
-const paymentValidator = function(payment){
-
+const genAll = function(){
+  const $genError =
+  $("<span id = gen-errror style='color:red'>You have one more more errors, please check above</span><br>");
+  $genError.insertBefore($("button[type=submit]"));
+  $genError.hide();
+  genNameError();
+  genEmailError();
+  genActError();
 }
 
-//show or hide tips
+genAll();
 
-const showOrHideTips = function(show, element){
-  if(show){
-    element.style.display = "inherit";
+//validate functions for each component
+function validateName() {
+  const nameInput = $name.val();
+  const nameRegEx = /[a-z]+/i;
+  let tester = nameRegEx.test(nameInput);
+  if (tester) {
+    $('#name-error').hide();
+  } else {
+    $('#name-error').show();
   }
-  else{
-    element.style.display = "none";
-  }
+  return tester;
 }
 
-//listener to see if any validators return false value
-const createListener = function(validator){
-  return e =>{
-     const text = e.target.value;
-     const valid = validator(text);
-     const showTip = text !== "" && !valid;
-     const tooltip = e.target.nextElementSibling;
-     showOrHideTips(showTip, tooltip);
+function validateEmail() {
+  const emailInput = $email.val();
+  const emailRegEx = /^[^@]+@[^@.]+\.[a-z]+$/i;
+  let tester = emailRegEx.test(emailInput);
+  if (tester) {
+    $('#email-error').hide();
+  } else {
+    $('#email-error').show();
   }
+  return tester;
 }
 
-$name.on("input", createListener(nameValidator));
-//$email.on("input", createListener(emailValidator));
-//activities.addEventListener('input', createListener(activityValidator));
-//$("#credit-card").on("input", createListener(paymentValidator));
+function validateActivity() {
+  let tester = true;
+  if ($("input[type=checkbox]:checked").length == 0) {
+    $('#activity-error').show();
+    tester = false;
+  } else {
+    $('#activity-error').hide();
+    tester = true;
+  }
+  return tester;
+}
+
+
+$('button').on('click', function() {
+  $form.submit(function() {
+    if (!validateName()) {
+      event.preventDefault();
+      $('#gen-error').show();
+    } else {
+      $('#gen-error').hide();
+    }
+    if (!validateEmail()) {
+      event.preventDefault();
+      $('#email-error').show();
+    } else {
+      $('#email-error').hide();
+    }
+    if (!validateActivity()) {
+      event.preventDefault();
+      $('#activity-error').show();
+    } else {
+      $('#activity-error').hide();
+    }
+  });
+});
+
+/*Event Listener on email form field displays an error message as user is typing
+ * until the input matches the acceptable email format.
+ */
