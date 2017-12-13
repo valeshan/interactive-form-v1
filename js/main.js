@@ -322,8 +322,8 @@ const validateCardNum = function() {
 const emptyCheck = function() {
     if ($("#payment").val() == "credit card"){
       const cNumInput = $creditNum.val();
-      const emptyRegEx = /^\d/;
-      let tester = emptyRegEx.test(cNumInput);
+      const emptyCheckRegEx = /^\d/;
+      let tester = emptyCheckRegEx.test(cNumInput);
       if (tester) {
         $('#empty-cnum').hide();
       } else {
