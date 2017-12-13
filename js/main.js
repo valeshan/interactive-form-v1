@@ -229,13 +229,17 @@ const genActError = function() {
 const genCardNumError = function() {
   const $cardNumError =
   $("<p id='ccnum-error' style='color:red'>Invalid card number, ensure between 13-16 numbers</p><br>");
+  const $emptyNumError =
+  $("<p id='empty-cnum' style='color:red'>Please enter a credit card number</p><br>");
+  $emptyNumError.insertBefore($("label[for=exp-month]"));
   $cardNumError.insertBefore($("label[for=exp-month]"));
+  $emptyNumError.hide();
   $cardNumError.hide();
 }
 
 const genZipError = function() {
   const $zipError =
-  $("<p id='zip-error' style='color:red'>Invalid zip code</p><br>");
+  $("<p id='zip-error' style='color:red'>Invalid Zip Code</p><br>");
   $zipError.insertBefore($("label[for=exp-month]"));
   $zipError.hide();
 }
@@ -263,7 +267,7 @@ const genAllError = function(){
 genAllError();
 
 //validate functions for each component
-function validateName() {
+const validateName = function() {
   const nameInput = $name.val();
   const nameRegEx = /[a-z]+/i;
   let tester = nameRegEx.test(nameInput);
@@ -275,7 +279,7 @@ function validateName() {
   return tester;
 }
 
-function validateEmail() {
+const validateEmail = function() {
   const emailInput = $email.val();
   const emailRegEx = /^[^@]+@[^@.]+\.[a-z]+$/i;
   let tester = emailRegEx.test(emailInput);
@@ -287,7 +291,7 @@ function validateEmail() {
   return tester;
 }
 
-function validateActivity() {
+const validateActivity = function() {
   let tester = true;
   if ($("input[type=checkbox]:checked").length == 0) {
     $('#activity-error').show();
@@ -299,54 +303,72 @@ function validateActivity() {
   return tester;
 }
 
-function validateCardNum() {
+const validateCardNum = function() {
     if ($("#payment").val() == "credit card"){
-    const cNumInput = $creditNum.val();
-    const cNumRegEx = /^\d{13,16}$/;
-    let tester = cNumRegEx.test(cNumInput);
-    if (tester) {
+      const cNumInput = $creditNum.val();
+      const cNumRegEx = /^\d{13,16}$/;
+      let tester = cNumRegEx.test(cNumInput);
+      if (tester) {
+        $('#ccnum-error').hide();
+      } else {
+        $('#ccnum-error').show();
+      }
+      return tester;
+    } else {
       $('#ccnum-error').hide();
-    } else {
-      $('#ccnum-error').show();
     }
-    return tester;
-  } else {
-    $('#ccnum-error').hide();
-  }
 }
 
-function validateZip() {
+const emptyCheck = function() {
     if ($("#payment").val() == "credit card"){
-    const zipInput = $zipCode.val();
-    const zipRegEx = /^\d{5}$/;
-    let tester = zipRegEx.test(zipInput);
-    if (tester) {
+      const cNumInput = $creditNum.val();
+      const emptyRegEx = /^\d/;
+      let tester = emptyRegEx.test(cNumInput);
+      if (tester) {
+        $('#empty-cnum').hide();
+      } else {
+        $('#empty-cnum').show()
+        $('#ccnum-error').hide();
+      }
+      return tester;
+    } else {
+      $('#empty-cnum').hide();
+    }
+}
+
+const validateZip = function() {
+    if ($("#payment").val() == "credit card"){
+      const zipInput = $zipCode.val();
+      const zipRegEx = /^\d{5}$/;
+      let tester = zipRegEx.test(zipInput);
+      if (tester) {
+        $('#zip-error').hide();
+      } else {
+        $('#zip-error').show();
+      }
+      return tester;
+    } else {
       $('#zip-error').hide();
-    } else {
-      $('#zip-error').show();
     }
-    return tester;
-  } else {
-    $('#zip-error').hide();
-  }
 }
 
-function validateCVV() {
+const validateCVV = function() {
     if ($("#payment").val() == "credit card"){
-    const cvvInput = $cvv.val();
-    const cvvRegEx = /^\d{3}$/;
-    let tester = cvvRegEx.test(cvvInput);
-    if (tester) {
-      $('#cvv-error').hide();
+      const cvvInput = $cvv.val();
+      const cvvRegEx = /^\d{3}$/;
+      let tester = cvvRegEx.test(cvvInput);
+      if (tester) {
+        $('#cvv-error').hide();
+      } else {
+        $('#cvv-error').show();
+      }
+      return tester;
     } else {
-      $('#cvv-error').show();
-    }
-    return tester;
-  } else {
     $('#cvv-error').hide();
-  }
+    }
 }
 
+//submission form, adds gen error as well as prevent event default if function is false
 $('button').on('click', function() {
   $form.submit(function() {
     if (!validateName()) {
@@ -387,6 +409,12 @@ $('button').on('click', function() {
       } else{
         $('#gen-error').hide();
       }
+      if(!emptyCheck()){
+        event.preventDefault();
+        $('#gen-error').show();
+      } else{
+        $('#gen-error').hide();
+      }
     }
   });
 });
@@ -397,3 +425,4 @@ $cvv.keyup(()=>validateCVV());
 $zipCode.keyup(()=>validateZip());
 $activities.change(()=>validateActivity());
 $card.keyup(()=>validateCardNum());
+$card.keyup(()=>emptyCheck());
