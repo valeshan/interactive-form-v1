@@ -187,11 +187,11 @@ const paySelector = function(){
   } else if($("#payment").val()=="paypal"){
     $("#credit-card").hide();
     $("#credit-card").next().show();
-    $("#credit-card").next().next().next().hide();
+    $("#credit-card").next().next().hide();
   } else if($("#payment").val()=="bitcoin"){
     $("#credit-card").hide();
     $("#credit-card").next().hide();
-    $("#credit-card").next().next().next().show();
+    $("#credit-card").next().next().show();
   }
 }
 
@@ -226,14 +226,28 @@ const genActError = function() {
   $activityError.hide();
 }
 
-const genCardNum = function() {
+const genCardNumError = function() {
   const $cardNumError =
   $("<p id='ccnum-error' style='color:red'>Invalid card number, ensure between 13-16 numbers</p><br>");
-  $cardNumError.insertAfter($card);
+  $cardNumError.insertBefore($("label[for=exp-month]"));
   $cardNumError.hide();
 }
 
-const genAll = function(){
+const genZipError = function() {
+  const $zipError =
+  $("<p id='zip-error' style='color:red'>Invalid zip code</p><br>");
+  $zipError.insertBefore($("label[for=exp-month]"));
+  $zipError.hide();
+}
+
+const genCVVError = function() {
+  const $cvvError =
+  $("<p id='cvv-error' style='color:red'>Invalid CVV</p><br>");
+  $cvvError.insertBefore($("label[for=exp-month]"));
+  $cvvError.hide();
+}
+
+const genAllError = function(){
   const $genError =
   $("<p id = gen-error style='color:red'>You have one more more errors, please check above</p><br>");
   $genError.insertBefore($("button[type=submit]"));
@@ -241,10 +255,12 @@ const genAll = function(){
   genNameError();
   genEmailError();
   genActError();
-  genCardNum();
+  genCardNumError();
+  genZipError();
+  genCVVError();
 }
 
-genAll();
+genAllError();
 
 //validate functions for each component
 function validateName() {
@@ -299,11 +315,44 @@ function validateCardNum() {
   }
 }
 
+function validateZip() {
+    if ($("#payment").val() == "credit card"){
+    const zipInput = $zipCode.val();
+    const zipRegEx = /^\d{5}$/;
+    let tester = zipRegEx.test(zipInput);
+    if (tester) {
+      $('#zip-error').hide();
+    } else {
+      $('#zip-error').show();
+    }
+    return tester;
+  } else {
+    $('#zip-error').hide();
+  }
+}
+
+function validateCVV() {
+    if ($("#payment").val() == "credit card"){
+    const cvvInput = $cvv.val();
+    const cvvRegEx = /^\d{3}$/;
+    let tester = cvvRegEx.test(cvvInput);
+    if (tester) {
+      $('#cvv-error').hide();
+    } else {
+      $('#cvv-error').show();
+    }
+    return tester;
+  } else {
+    $('#cvv-error').hide();
+  }
+}
+
 $('button').on('click', function() {
   $form.submit(function() {
     if (!validateName()) {
       event.preventDefault();
       $('#gen-error').show();
+      $name.keyup(()=>validateName());
     } else {
       $('#gen-error').hide();
     }
@@ -326,13 +375,25 @@ $('button').on('click', function() {
       } else{
         $('#gen-error').hide();
       }
+      if(!validateZip()){
+        event.preventDefault();
+        $('#gen-error').show();
+      } else{
+        $('#gen-error').hide();
+      }
+      if(!validateCVV()){
+        event.preventDefault();
+        $('#gen-error').show();
+      } else{
+        $('#gen-error').hide();
+      }
     }
   });
 });
 
-/*Event Listener on email form field displays an error message as user is typing
- * until the input matches the acceptable email format.
- */
+// Event handlers for each component requiring validation
 $email.keyup(()=>validateEmail());
+$cvv.keyup(()=>validateCVV());
+$zipCode.keyup(()=>validateZip());
 $activities.change(()=>validateActivity());
-$payment.on('keyup change mouseout', ()=>validateCardNum());
+$card.keyup(()=>validateCardNum());
