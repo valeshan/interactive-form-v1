@@ -187,11 +187,11 @@ const paySelector = function(){
   } else if($("#payment").val()=="paypal"){
     $("#credit-card").hide();
     $("#credit-card").next().show();
-    $("#credit-card").next().next().hide();
+    $("#credit-card").next().next().next().hide();
   } else if($("#payment").val()=="bitcoin"){
     $("#credit-card").hide();
     $("#credit-card").next().hide();
-    $("#credit-card").next().next().show();
+    $("#credit-card").next().next().next().show();
   }
 }
 
@@ -206,31 +206,42 @@ $payment.on("change", paySelector);
 
 //generate error functions
 const genNameError = function() {
-  const $nameError = $("<span id='name-error' style='color:red'>Please enter your name below.</span>");
+  const $nameError =
+  $("<span id='name-error' style='color:red'>Please enter your name below.</span>");
   $nameError.insertBefore($name);
   $nameError.hide();
 }
 
 const genEmailError = function() {
-  const $emailError = $("<span id='email-error' style='color:red'>Please correctly enter your email below.</span>");
+  const $emailError =
+  $("<span id='email-error' style='color:red'>Please correctly enter your email below.</span>");
   $emailError.insertBefore($email);
   $emailError.hide();
 }
 
 const genActError = function() {
-  const $activityError = $("<span id='activity-error' style='color:red'>Please select an activity above.</span>");
+  const $activityError =
+  $("<span id='activity-error' style='color:red'>Please select an activity/activities above.</span>");
   $activityError.insertAfter($activities);
   $activityError.hide();
 }
 
+const genCardNum = function() {
+  const $cardNumError =
+  $("<p id='ccnum-error' style='color:red'>Invalid card number, ensure between 13-16 numbers</p><br>");
+  $cardNumError.insertAfter($card);
+  $cardNumError.hide();
+}
+
 const genAll = function(){
   const $genError =
-  $("<span id = gen-errror style='color:red'>You have one more more errors, please check above</span><br>");
+  $("<p id = gen-error style='color:red'>You have one more more errors, please check above</p><br>");
   $genError.insertBefore($("button[type=submit]"));
   $genError.hide();
   genNameError();
   genEmailError();
   genActError();
+  genCardNum();
 }
 
 genAll();
@@ -272,6 +283,21 @@ function validateActivity() {
   return tester;
 }
 
+function validateCardNum() {
+    if ($("#payment").val() == "credit card"){
+    const cNumInput = $creditNum.val();
+    const cNumRegEx = /^\d{13,16}$/;
+    let tester = cNumRegEx.test(cNumInput);
+    if (tester) {
+      $('#ccnum-error').hide();
+    } else {
+      $('#ccnum-error').show();
+    }
+    return tester;
+  } else {
+    $('#ccnum-error').hide();
+  }
+}
 
 $('button').on('click', function() {
   $form.submit(function() {
@@ -283,15 +309,23 @@ $('button').on('click', function() {
     }
     if (!validateEmail()) {
       event.preventDefault();
-      $('#email-error').show();
+      $('#gen-error').show();
     } else {
-      $('#email-error').hide();
+      $('#gen-error').hide();
     }
     if (!validateActivity()) {
       event.preventDefault();
-      $('#activity-error').show();
+      $('#gen-error').show();
     } else {
-      $('#activity-error').hide();
+      $('#gen-error').hide();
+    }
+    if($("#payment").val() == "credit card"){
+      if(!validateCardNum()){
+        event.preventDefault();
+        $('#gen-error').show();
+      } else{
+        $('#gen-error').hide();
+      }
     }
   });
 });
@@ -299,3 +333,6 @@ $('button').on('click', function() {
 /*Event Listener on email form field displays an error message as user is typing
  * until the input matches the acceptable email format.
  */
+$email.keyup(()=>validateEmail());
+$activities.change(()=>validateActivity());
+$payment.on('keyup change mouseout', ()=>validateCardNum());
