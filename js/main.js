@@ -226,28 +226,22 @@ const genActError = function() {
   $activityError.hide();
 }
 
-const genCardNumError = function() {
+const genCardError = function() {
   const $cardNumError =
   $("<p id='ccnum-error' style='color:red'>Invalid card number, ensure between 13-16 numbers</p><br>");
   const $emptyNumError =
   $("<p id='empty-cnum' style='color:red'>Please enter a credit card number</p><br>");
-  $emptyNumError.insertBefore($("label[for=exp-month]"));
-  $cardNumError.insertBefore($("label[for=exp-month]"));
-  $emptyNumError.hide();
-  $cardNumError.hide();
-}
-
-const genZipError = function() {
   const $zipError =
   $("<p id='zip-error' style='color:red'>Invalid Zip Code</p><br>");
-  $zipError.insertBefore($("label[for=exp-month]"));
-  $zipError.hide();
-}
-
-const genCVVError = function() {
   const $cvvError =
   $("<p id='cvv-error' style='color:red'>Invalid CVV</p><br>");
+  $emptyNumError.insertBefore($("label[for=exp-month]"));
+  $cardNumError.insertBefore($("label[for=exp-month]"));
+  $zipError.insertBefore($("label[for=exp-month]"));
   $cvvError.insertBefore($("label[for=exp-month]"));
+  $emptyNumError.hide();
+  $cardNumError.hide();
+  $zipError.hide();
   $cvvError.hide();
 }
 
@@ -259,9 +253,7 @@ const genAllError = function(){
   genNameError();
   genEmailError();
   genActError();
-  genCardNumError();
-  genZipError();
-  genCVVError();
+  genCardError();
 }
 
 genAllError();
